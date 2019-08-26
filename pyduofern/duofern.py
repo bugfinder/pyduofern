@@ -530,10 +530,10 @@ class Duofern(object):
                 chans.append(chan)
 
             if code[0:2] in ("65", "69", "74", "ad"):
-                module_definition01 = self.modules['by_code'][code + "00"]
+                module_definition01 = self.modules['by_code'][code]
                 if not module_definition01:
                     DoTrigger("global", "UNDEFINED DUOFERN_code_sensor DUOFERN code00")
-                    module_definition01 = self.modules['by_code'][code + "00"]
+                    module_definition01 = self.modules['by_code'][code]
 
                 if (module_definition01):
                     hash = module_definition01
@@ -545,7 +545,7 @@ class Duofern(object):
                     else:
                         self.update_state(code, "state", sensorMsg[id]['state'], "1")
 
-                    self.update_state(code, "channelchan", sensorMsg[id]['name'], "1")
+                    self.update_state(code, "channel" + chan, sensorMsg[id]['name'], "1")
                 else:
                     if (code[0:2] not in ("69", "73")) or (id[2:4] in ("11", "12")):
                         chan = ""
