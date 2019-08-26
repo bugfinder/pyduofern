@@ -97,7 +97,7 @@ class Duofern(object):
     def add_device(self, code, name=None):
         if name is None:
             name = len(self.modules['by_code'])
-        logger.debug("adding {}".format(code))
+        logger.warning("adding {}".format(code))
         self.modules['by_code'][code] = {'name': name}
 
     def del_device(self, code, name=None):
@@ -530,6 +530,11 @@ class Duofern(object):
                 chans.append(chan)
 
             if code[0:2] in ("65", "69", "74", "ad"):
+                logger.warning("DUOFERN taster msg: {}".format(msg))
+                logger.warning("DUOFERN taster code: {}".format(code))
+                logger.warning("DUOFERN taster chan: {}".format(chan))
+                logger.warning("DUOFERN taster id: {}".format(id))
+                logger.warning("DUOFERN taster chans: {}".format(chans))
                 module_definition01 = self.modules['by_code'][code]
                 if not module_definition01:
                     DoTrigger("global", "UNDEFINED DUOFERN_code_sensor DUOFERN code00")
