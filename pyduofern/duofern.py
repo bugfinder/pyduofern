@@ -173,7 +173,7 @@ class Duofern(object):
             # del hash['helper']['timeout']
 
             # Bewegungsmelder, Wettersensor, Mehrfachwandtaster not tested yet
-            if code[0:2] in ("65", "69", "74"):  # pragma: no cover
+            if code[0:2] in ("65", "69", "74", "ad"):  # pragma: no cover
                 self.update_state(code, "state", "OK", "1")
                 module_definition01 = self.modules['by_code'][code + "01"]
                 if not module_definition01:
@@ -519,7 +519,7 @@ class Duofern(object):
                 chan = "01"
 
             chans = []
-            if (sensorMsg[id][chan] == 5):
+            if (sensorMsg[id]['chan'] == 5):
                 chanCount = 4 if (code[0:2] == "73") else 5
                 for x in range(0, chanCount):
                     if ((0x01 << x) & int(chan, 16)):
@@ -529,14 +529,14 @@ class Duofern(object):
             else:
                 chans.append(chan)
 
-            if code[0:2] in ("65", "69", "74"):
+            if code[0:2] in ("65", "69", "74", "ad"):
                 module_definition01 = self.modules['by_code'][code + "00"]
-            if not module_definition01:
-                DoTrigger("global", "UNDEFINED DUOFERN_code_sensor DUOFERN code00")
-                module_definition01 = self.modules['by_code'][code + "00"]
+                if not module_definition01:
+                    DoTrigger("global", "UNDEFINED DUOFERN_code_sensor DUOFERN code00")
+                    module_definition01 = self.modules['by_code'][code + "00"]
 
-            if (module_definition01):
-                hash = module_definition01
+                if (module_definition01):
+                    hash = module_definition01
 
             for chan in chans:
                 if id[2:4] in ("1a", "18", "19", "01", "02", "03"):
@@ -553,7 +553,7 @@ class Duofern(object):
                         self.update_state(code, "state", sensorMsg[id]['state'], "1")
 
                     self.update_state(code, "event", sensorMsg[id]['name'] + "." + chan, "1")
-                    DoTrigger(hash["name"], sensorMsg[id][name] + "." + chan)
+                    DoTrigger(hash["name"], sensorMsg[id]['name'] + "." + chan)
 
 
 
@@ -699,7 +699,7 @@ class Duofern(object):
             sets = merge_dicts(setsDefaultRollerShutter, setsUmweltsensor01)  # if (code =~ /^69....01/)
         if code[0:2] == "43" and len(code) >= 8 and code[6:8] in ("01", "02"):
             sets = merge_dicts(*setsSwitchActor)  # if (code =~ /^43....(01|02)/)
-        if code[0:2] in ("43", "65", "74"):
+        if code[0:2] in ("43", "65", "74", "ad"):
             sets = merge_dicts(setsBasic, {"getStatus:noArg": ""})  # if (code =~ /^(43|65|74)..../)
         if code[0:2] in ("46", "71"):
             sets = merge_dicts(setsBasic, setsSwitchActor)  # if (code =~ /^(46|71)..../)
@@ -709,7 +709,7 @@ class Duofern(object):
             sets = merge_dicts(setsBasic, setsDimmer)  # if (code =~ /^48..../)
         if code[0:2] == "73":
             sets = merge_dicts(setsBasic, setsThermostat)  # if (code =~ /^73..../)
-        if code[0:2] in ("65", "74") and len(code) >= 8 and code[6:8] == "01":
+        if code[0:2] in ("65", "74", "ad") and len(code) >= 8 and code[6:8] == "01":
             sets = merge_dicts(setsSwitchActor)  # if (code =~ /^(65|74)....01/)
 
         blindsMode = "off" if not "blindsMode" in self.modules['by_code'][code] else self.modules['by_code'][code]
